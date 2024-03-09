@@ -30,8 +30,40 @@ class InternetSpeed:
 
                     self.process_file()
 
-    def process_file(self):
+    @staticmethod
+    def calculate_all(price, speed, speed_after_fua, allowance):
         SECONDS_IN_A_MONTH = 2592000
+
+        # recalculate price for GST 8%
+        price = price + price * 0.08
+
+        # definitions
+        kbps = speed / 0.008
+        kbps_after_fua = speed_after_fua / 0.008
+        time_for_gig = ((1 * 1000) * 1000) / kbps
+        time_for_gig_after_fua = ((1 * 1000) * 1000) / kbps_after_fua
+        time_to_deplete_fua = time_for_gig * allowance
+        time_left_after_fua = SECONDS_IN_A_MONTH - time_to_deplete_fua
+        possible_gb_after_fua = time_left_after_fua / time_for_gig_after_fua
+        possible_gb_total = possible_gb_after_fua + allowance
+        price_per_gig = possible_gb_total / price
+
+        # round off to two decimals
+        price = round(price, 2)
+        kbps = round(kbps, 2)
+        kbps_after_fua = round(kbps_after_fua, 2)
+        time_for_gig = round(time_for_gig, 2)
+        time_for_gig_after_fua = round(time_for_gig_after_fua, 2)
+        time_to_deplete_fua = round(time_to_deplete_fua, 2)
+        time_left_after_fua = round(time_left_after_fua, 2)
+        possible_gb_after_fua = round(possible_gb_after_fua, 2)
+        possible_gb_total = round(possible_gb_total, 2)
+        price_per_gig = round(price_per_gig, 2)
+        return (price, speed, speed_after_fua, allowance, kbps, kbps_after_fua, time_for_gig, time_for_gig_after_fua,
+                time_to_deplete_fua, time_left_after_fua, possible_gb_after_fua, possible_gb_total, price_per_gig)
+
+    def process_file(self):
+
         with open(self.datafile, newline='') as csvfile:
             datafilereader = csv.reader(csvfile, delimiter=',')
             datafilereader.__next__()  # skip header
@@ -41,35 +73,16 @@ class InternetSpeed:
                     "TTD 1GB POST FUA,TIME TO DEPLETE FUA,TIME LEFT AFTER FUA,"
                     "POSSIBLE GB POST FUA,TOTAL POSSIBLE GB,PRICE / GB" + "\n"
                 )
+
                 for row in datafilereader:
-                    isp, plan_name, price, speed, speed_after_fua, allowance = row[0], row[1], float(row[2]), float(
-                        row[3]), float(row[4]), float(row[5])
+                    isp, plan_name, price, speed, speed_after_fua, allowance = self.read_from_data(row)
 
-                    # recalculate price for GST 8%
-                    price = price + price * 0.08
-
-                    # definitions
-                    kbps = speed / 0.008
-                    kbps_after_fua = speed_after_fua / 0.008
-                    time_for_gig = ((1 * 1000) * 1000) / kbps
-                    time_for_gig_after_fua = ((1 * 1000) * 1000) / kbps_after_fua
-                    time_to_deplete_fua = time_for_gig * allowance
-                    time_left_after_fua = SECONDS_IN_A_MONTH - time_to_deplete_fua
-                    possible_gb_after_fua = time_left_after_fua / time_for_gig_after_fua
-                    possible_gb_total = possible_gb_after_fua + allowance
-                    price_per_gig = possible_gb_total / price
-
-                    # round off to two decimals
-                    price = round(price, 2)
-                    kbps = round(kbps, 2)
-                    kbps_after_fua = round(kbps_after_fua, 2)
-                    time_for_gig = round(time_for_gig, 2)
-                    time_for_gig_after_fua = round(time_for_gig_after_fua, 2)
-                    time_to_deplete_fua = round(time_to_deplete_fua, 2)
-                    time_left_after_fua = round(time_left_after_fua, 2)
-                    possible_gb_after_fua = round(possible_gb_after_fua, 2)
-                    possible_gb_total = round(possible_gb_total, 2)
-                    price_per_gig = round(price_per_gig, 2)
+                    # yikes...
+                    (price, speed, speed_after_fua, allowance,
+                     kbps, kbps_after_fua, time_for_gig,
+                     time_for_gig_after_fua, time_to_deplete_fua, time_left_after_fua,
+                     possible_gb_after_fua, possible_gb_total,
+                     price_per_gig) = self.calculate_all(price, speed, speed_after_fua, allowance)
 
                     # adding more data and
                     result_file.write(
@@ -80,50 +93,40 @@ class InternetSpeed:
                         f"{possible_gb_total},{price_per_gig}" + "\n"
                     )
 
-            with open(self.datafile, newline='') as csvfile:
-                datafilereader = csv.reader(csvfile, delimiter=',')
-                datafilereader.__next__()  # skip header
+        with open(self.datafile, newline='') as csvfile:
+            datafilereader = csv.reader(csvfile, delimiter=',')
+            datafilereader.__next__()  # skip header
 
-                # create a more simplified file (another file)
-                with open('result_simple.csv', 'w', encoding='utf-8') as result_simple_file:
+            # create a more simplified file (another file)
+            with open('result_simple.csv', 'w', encoding='utf-8') as result_simple_file:
+                result_simple_file.write(
+                    "ISP, PLAN,PRICE (INC. 8% GST),NORMAL SPEED,SPEED AFTER FUA,FUA (GB),TTD 1GB,"
+                    "TTD 1GB POST FUA,TIME TO DEPLETE FUA,"
+                    "TOTAL POSSIBLE GB,PRICE / GB" + "\n"
+                )
+
+                for row in datafilereader:
+                    isp, plan_name, price, speed, speed_after_fua, allowance = self.read_from_data(row)
+
+                    # yikes...
+                    (price, speed, speed_after_fua, allowance,
+                     kbps, kbps_after_fua, time_for_gig,
+                     time_for_gig_after_fua, time_to_deplete_fua, time_left_after_fua,
+                     possible_gb_after_fua, possible_gb_total,
+                     price_per_gig) = self.calculate_all(price, speed, speed_after_fua, allowance)
+
                     result_simple_file.write(
-                        "ISP, PLAN,PRICE (INC. 8% GST),NORMAL SPEED,SPEED AFTER FUA,FUA (GB),TTD 1GB,"
-                        "TTD 1GB POST FUA,TIME TO DEPLETE FUA,"
-                        "TOTAL POSSIBLE GB,PRICE / GB" + "\n"
+                        f"{isp},{plan_name},{price},{speed},{speed_after_fua},"
+                        f"{allowance},{time_for_gig},"
+                        f"{time_for_gig_after_fua},{time_to_deplete_fua},"
+                        f"{possible_gb_total},{price_per_gig}" + "\n"
                     )
 
-                    for row in datafilereader:
-                        isp, plan_name, price, speed, speed_after_fua, allowance = row[0], row[1], float(row[2]), float(
-                            row[3]), float(row[4]), float(row[5])
-
-                        # recalculate price for GST 8%
-                        price = price + price * 0.08
-
-                        # definitions
-                        kbps = speed / 0.008
-                        kbps_after_fua = speed_after_fua / 0.008
-                        time_for_gig = ((1 * 1000) * 1000) / kbps
-                        time_for_gig_after_fua = ((1 * 1000) * 1000) / kbps_after_fua
-                        time_to_deplete_fua = time_for_gig * allowance
-                        time_left_after_fua = SECONDS_IN_A_MONTH - time_to_deplete_fua
-                        possible_gb_after_fua = time_left_after_fua / time_for_gig_after_fua
-                        possible_gb_total = possible_gb_after_fua + allowance
-                        price_per_gig = possible_gb_total / price
-
-                        # round off to two decimals
-                        price = round(price, 2)
-                        time_for_gig = round(time_for_gig, 2)
-                        time_for_gig_after_fua = round(time_for_gig_after_fua, 2)
-                        time_to_deplete_fua = round(time_to_deplete_fua, 2)
-                        possible_gb_total = round(possible_gb_total, 2)
-                        price_per_gig = round(price_per_gig, 2)
-
-                        result_simple_file.write(
-                            f"{isp},{plan_name},{price},{speed},{speed_after_fua},"
-                            f"{allowance},{time_for_gig},"
-                            f"{time_for_gig_after_fua},{time_to_deplete_fua},"
-                            f"{possible_gb_total},{price_per_gig}" + "\n"
-                        )
+    @staticmethod
+    def read_from_data(row):
+        isp, plan_name, price, speed, speed_after_fua, allowance = row[0], row[1], float(row[2]), float(
+            row[3]), float(row[4]), float(row[5])
+        return isp, plan_name, price, speed, speed_after_fua, allowance
 
 
 if __name__ == "__main__":
