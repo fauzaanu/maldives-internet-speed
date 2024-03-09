@@ -3,6 +3,7 @@ A script to calculate most of everything we need for calculating internet speeds
 """
 import csv
 
+
 class InternetSpeed:
     def __init__(self, datafile: str):
         self.datafile = datafile
@@ -17,10 +18,57 @@ class InternetSpeed:
             datafilereader = csv.reader(csvfile, delimiter=',')
             for row in datafilereader:
                 if datafilereader.line_num == 1:
-                    if row == columns_in_order:
-                        print("Columns are in the correct order")
+                    if row != columns_in_order:
+                        print("Please keep the csv files header in the following format")
+                        print("plan_name,price,speed,speed_after_fua,allowance")
+                        raise ValueError("Header does not follow the required order")
+                else:
+                    # make sure everything except plan_names can be converted to floats
+                    for i in range(1, 4):
+                        temp_var = float(row[i])
+                        # value error will be auto raised here when conversion fails
 
-                print(row)
+                    self.process_file()
+
+    def process_file(self):
+        SECONDS_IN_A_MONTH = 2592000
+        with open(self.datafile, newline='') as csvfile:
+            datafilereader = csv.reader(csvfile, delimiter=',')
+            datafilereader.__next__()  # skip header
+            with open('result.csv', 'w', encoding='utf-8') as result_file:
+                result_file.write(
+                    "plan_name,price,speed,speed_after_fua,allowance,kbps,kbps_after_fua,time_for_gig,"
+                    "time_for_gig_after_fua,time_to_deplete_fua,time_left_after_fua,"
+                    "possible_gb_after_fua,possible_gb_total,price_per_gig" + "\n"
+                )
+                for row in datafilereader:
+                    plan_name, price, speed, speed_after_fua, allowance = row[0], float(row[1]), float(row[2]), float(
+                        row[3]), float(row[4])
+
+                    # recalculate price for GST 8%
+                    price = price + price * 0.08
+
+                    # definitions
+                    kbps = speed / 0.008
+                    kbps_after_fua = speed_after_fua / 0.008
+                    time_for_gig = ((1 * 1000) * 1000) / kbps
+                    time_for_gig_after_fua = ((1 * 1000) * 1000) / kbps_after_fua
+                    time_to_deplete_fua = time_for_gig * allowance
+                    time_left_after_fua = SECONDS_IN_A_MONTH - time_to_deplete_fua
+                    possible_gb_after_fua = time_left_after_fua / time_for_gig_after_fua
+                    possible_gb_total = possible_gb_after_fua + allowance
+                    price_per_gig = possible_gb_total / price
+
+
+
+                    # adding more data and
+                    result_file.write(
+                        f"{plan_name},{price},{speed},{speed_after_fua},"
+                        f"{allowance},{kbps},{kbps_after_fua},{time_for_gig},"
+                        f"{time_for_gig_after_fua},{time_to_deplete_fua},"
+                        f"{time_left_after_fua},{possible_gb_after_fua},"
+                        f"{possible_gb_total},{price_per_gig}" + "\n"
+                    )
 
 
 if __name__ == "__main__":
