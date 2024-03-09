@@ -1,8 +1,8 @@
-I just changed to hulhumale and there is no internet.
+# Internet Speeds in Maldives
 
-Best time to write a small calculation script for all internet
-packages in maldives :|
+Comparing all the internet speeds in maldives along with max possible GB, Rate of price per GB and so on
 
-Vanilla python as Im writing this without internet.
 
-Just me and the python docs :)
+TODO:
+-[ ] ADD ROL?
+-[ ] json format

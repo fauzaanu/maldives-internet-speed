@@ -13,18 +13,18 @@ class InternetSpeed:
         if not self.datafile.endswith("csv"):
             raise ValueError("Should be a csv file")
 
-        columns_in_order = ["plan_name", "price", "speed", "speed_after_fua", "allowance"]
+        columns_in_order = ["isp", "plan_name", "price", "speed", "speed_after_fua", "allowance"]
         with open(self.datafile, newline='') as csvfile:
             datafilereader = csv.reader(csvfile, delimiter=',')
             for row in datafilereader:
                 if datafilereader.line_num == 1:
                     if row != columns_in_order:
                         print("Please keep the csv files header in the following format")
-                        print("plan_name,price,speed,speed_after_fua,allowance")
+                        print("isp,plan_name,price,speed,speed_after_fua,allowance")
                         raise ValueError("Header does not follow the required order")
                 else:
                     # make sure everything except plan_names can be converted to floats
-                    for i in range(1, 4):
+                    for i in range(2, 4):
                         temp_var = float(row[i])
                         # value error will be auto raised here when conversion fails
 
@@ -37,13 +37,13 @@ class InternetSpeed:
             datafilereader.__next__()  # skip header
             with open('result.csv', 'w', encoding='utf-8') as result_file:
                 result_file.write(
-                    "plan_name,price,speed,speed_after_fua,allowance,kbps,kbps_after_fua,time_for_gig,"
-                    "time_for_gig_after_fua,time_to_deplete_fua,time_left_after_fua,"
-                    "possible_gb_after_fua,possible_gb_total,price_per_gig" + "\n"
+                    "ISP, PLAN,PRICE (INC. 8% GST),NORMAL SPEED,SPEED AFTER FUA,FUA (GB),KBPS ,KBPS POST FUA ,TTD 1GB,"
+                    "TTD 1GB POST FUA,TIME TO DEPLETE FUA,TIME LEFT AFTER FUA,"
+                    "POSSIBLE GB POST FUA,TOTAL POSSIBLE GB,PRICE / GB" + "\n"
                 )
                 for row in datafilereader:
-                    plan_name, price, speed, speed_after_fua, allowance = row[0], float(row[1]), float(row[2]), float(
-                        row[3]), float(row[4])
+                    isp, plan_name, price, speed, speed_after_fua, allowance = row[0], row[1], float(row[2]), float(
+                        row[3]), float(row[4]), float(row[5])
 
                     # recalculate price for GST 8%
                     price = price + price * 0.08
@@ -59,16 +59,71 @@ class InternetSpeed:
                     possible_gb_total = possible_gb_after_fua + allowance
                     price_per_gig = possible_gb_total / price
 
-
+                    # round off to two decimals
+                    price = round(price, 2)
+                    kbps = round(kbps, 2)
+                    kbps_after_fua = round(kbps_after_fua, 2)
+                    time_for_gig = round(time_for_gig, 2)
+                    time_for_gig_after_fua = round(time_for_gig_after_fua, 2)
+                    time_to_deplete_fua = round(time_to_deplete_fua, 2)
+                    time_left_after_fua = round(time_left_after_fua, 2)
+                    possible_gb_after_fua = round(possible_gb_after_fua, 2)
+                    possible_gb_total = round(possible_gb_total, 2)
+                    price_per_gig = round(price_per_gig, 2)
 
                     # adding more data and
                     result_file.write(
-                        f"{plan_name},{price},{speed},{speed_after_fua},"
+                        f"{isp},{plan_name},{price},{speed},{speed_after_fua},"
                         f"{allowance},{kbps},{kbps_after_fua},{time_for_gig},"
                         f"{time_for_gig_after_fua},{time_to_deplete_fua},"
                         f"{time_left_after_fua},{possible_gb_after_fua},"
                         f"{possible_gb_total},{price_per_gig}" + "\n"
                     )
+
+            with open(self.datafile, newline='') as csvfile:
+                datafilereader = csv.reader(csvfile, delimiter=',')
+                datafilereader.__next__()  # skip header
+
+                # create a more simplified file (another file)
+                with open('result_simple.csv', 'w', encoding='utf-8') as result_simple_file:
+                    result_simple_file.write(
+                        "ISP, PLAN,PRICE (INC. 8% GST),NORMAL SPEED,SPEED AFTER FUA,FUA (GB),TTD 1GB,"
+                        "TTD 1GB POST FUA,TIME TO DEPLETE FUA,"
+                        "TOTAL POSSIBLE GB,PRICE / GB" + "\n"
+                    )
+
+                    for row in datafilereader:
+                        isp, plan_name, price, speed, speed_after_fua, allowance = row[0], row[1], float(row[2]), float(
+                            row[3]), float(row[4]), float(row[5])
+
+                        # recalculate price for GST 8%
+                        price = price + price * 0.08
+
+                        # definitions
+                        kbps = speed / 0.008
+                        kbps_after_fua = speed_after_fua / 0.008
+                        time_for_gig = ((1 * 1000) * 1000) / kbps
+                        time_for_gig_after_fua = ((1 * 1000) * 1000) / kbps_after_fua
+                        time_to_deplete_fua = time_for_gig * allowance
+                        time_left_after_fua = SECONDS_IN_A_MONTH - time_to_deplete_fua
+                        possible_gb_after_fua = time_left_after_fua / time_for_gig_after_fua
+                        possible_gb_total = possible_gb_after_fua + allowance
+                        price_per_gig = possible_gb_total / price
+
+                        # round off to two decimals
+                        price = round(price, 2)
+                        time_for_gig = round(time_for_gig, 2)
+                        time_for_gig_after_fua = round(time_for_gig_after_fua, 2)
+                        time_to_deplete_fua = round(time_to_deplete_fua, 2)
+                        possible_gb_total = round(possible_gb_total, 2)
+                        price_per_gig = round(price_per_gig, 2)
+
+                        result_simple_file.write(
+                            f"{isp},{plan_name},{price},{speed},{speed_after_fua},"
+                            f"{allowance},{time_for_gig},"
+                            f"{time_for_gig_after_fua},{time_to_deplete_fua},"
+                            f"{possible_gb_total},{price_per_gig}" + "\n"
+                        )
 
 
 if __name__ == "__main__":
