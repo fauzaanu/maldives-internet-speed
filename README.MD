@@ -13,7 +13,22 @@ Comparing all the internet speeds in maldives along with max possible GB, Rate o
 ## How to choose an internet package 101
 
 1. You download a lot of stuff constantly
-   Go for the highest GB possible plans, with the current ranking this place is
+   - Go for the highest GB possible plans, comparison and choose something.
+2. You dont download a lot normally, and download once in a while
+   - Much better to go for the lowest package to get 5M after throttle
+   - And use a booster or a datapack for the downloads
+3. You need best value per GB
+   - Supernet 10M and FIBRE 10M gets you 1.5TB GB for the lowest price
+   - Going below that sets your speed at 2M and sets max possible GB at 600-ish GB and threfore, may not be that ideal
+
+### Starlink
+
+While calculating for starlink it was assumed that 1TB is available at 200M and the rest are available at 1M
+Source: (send a correction if this is wrong)
+1. https://arstechnica.com/tech-policy/2022/11/starlink-to-cap-users-at-1tb-of-high-speed-data-unless-they-pay-extra/
+
+Another point to note in starlink is that the 200M will not be consistent through out the month
+Also an important point is the setup cost is around 7x more than a normal setup cost of a local provider
 
 ## Usage
 
