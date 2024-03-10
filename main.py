@@ -2,6 +2,7 @@
 A script to calculate most of everything we need for calculating internet speeds, comparing price per GB and so on.
 """
 import csv
+from typing import Tuple, Any
 
 
 class InternetSpeed:
@@ -31,7 +32,11 @@ class InternetSpeed:
                     self.process_file()
 
     @staticmethod
-    def calculate_all(price, speed, speed_after_fua, allowance):
+    def calculate_all(price: float, speed: float, speed_after_fua: float, allowance: float) -> tuple[
+        float, float, float, float, float, float, float, float, float, float, float, float, float]:
+        """
+        The calculation of all the fields for the result file
+        """
         SECONDS_IN_A_MONTH = 2592000
 
         # recalculate price for GST 8%
@@ -61,6 +66,12 @@ class InternetSpeed:
         price_per_gig = round(price_per_gig, 2)
         return (price, speed, speed_after_fua, allowance, kbps, kbps_after_fua, time_for_gig, time_for_gig_after_fua,
                 time_to_deplete_fua, time_left_after_fua, possible_gb_after_fua, possible_gb_total, price_per_gig)
+
+    @staticmethod
+    def read_from_data(row):
+        isp, plan_name, price, speed, speed_after_fua, allowance = row[0], row[1], float(row[2]), float(
+            row[3]), float(row[4]), float(row[5])
+        return isp, plan_name, price, speed, speed_after_fua, allowance
 
     def process_file(self):
 
@@ -121,12 +132,6 @@ class InternetSpeed:
                         f"{time_for_gig_after_fua},{time_to_deplete_fua},"
                         f"{possible_gb_total},{price_per_gig}" + "\n"
                     )
-
-    @staticmethod
-    def read_from_data(row):
-        isp, plan_name, price, speed, speed_after_fua, allowance = row[0], row[1], float(row[2]), float(
-            row[3]), float(row[4]), float(row[5])
-        return isp, plan_name, price, speed, speed_after_fua, allowance
 
 
 if __name__ == "__main__":
