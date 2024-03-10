@@ -26,8 +26,7 @@ class InternetSpeed:
                 else:
                     # make sure everything except plan_names can be converted to floats
                     for i in range(2, 4):
-                        temp_var = float(row[i])
-                        # value error will be auto raised here when conversion fails
+                        temp_var = float(row[i])  # value error will be auto raised here when conversion fails
 
                     self.process_file()
 
@@ -100,7 +99,7 @@ class InternetSpeed:
                          possible_gb_after_fua, possible_gb_total,
                          price_per_gig) = self.calculate_all(price, speed, speed_after_fua, allowance)
 
-                        # adding more data and
+                        # result.csv
                         result_file.write(
                             f"{isp},{plan_name},{price},{speed},{speed_after_fua},"
                             f"{allowance},{kbps},{kbps_after_fua},{time_for_gig},"
@@ -109,6 +108,7 @@ class InternetSpeed:
                             f"{possible_gb_total},{price_per_gig}" + "\n"
                         )
 
+                        # result_simple.csv
                         result_simple_file.write(
                             f"{isp},{plan_name},{price},{speed},{speed_after_fua},"
                             f"{allowance},{time_for_gig},"
