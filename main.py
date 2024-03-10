@@ -78,43 +78,63 @@ class InternetSpeed:
             datafilereader.__next__()  # skip header
             with open('result.csv', 'w', encoding='utf-8') as result_file:
                 with open('result_simple.csv', 'w', encoding='utf-8') as result_simple_file:
-                    result_file.write(
-                        "ISP, PLAN,PRICE (INC. 8% GST),NORMAL SPEED,SPEED AFTER FUA,FUA (GB),KBPS ,KBPS POST FUA ,TTD 1GB,"
-                        "TTD 1GB POST FUA,TIME TO DEPLETE FUA,TIME LEFT AFTER FUA,"
-                        "POSSIBLE GB POST FUA,TOTAL POSSIBLE GB,PRICE / GB" + "\n"
-                    )
-                    result_simple_file.write(
-                        "ISP, PLAN,PRICE (INC. 8% GST),NORMAL SPEED,SPEED AFTER FUA,FUA (GB),TTD 1GB,"
-                        "TTD 1GB POST FUA,TIME TO DEPLETE FUA,"
-                        "TOTAL POSSIBLE GB,PRICE / GB" + "\n"
-                    )
+                    with open('max_gb.csv', 'w', encoding='utf-8') as max_gb_file:
+                        with open('max_value.csv', 'w', encoding='utf-8') as max_value:
+                            result_file.write(
+                                "ISP, PLAN,PRICE (INC. 8% GST),NORMAL SPEED,SPEED AFTER FUA,FUA (GB),KBPS ,KBPS POST FUA ,TTD 1GB,"
+                                "TTD 1GB POST FUA,TIME TO DEPLETE FUA,TIME LEFT AFTER FUA,"
+                                "POSSIBLE GB POST FUA,TOTAL POSSIBLE GB,PRICE / GB" + "\n"
+                            )
+                            result_simple_file.write(
+                                "ISP, PLAN,PRICE (INC. 8% GST),NORMAL SPEED,SPEED AFTER FUA,FUA (GB),TTD 1GB,"
+                                "TTD 1GB POST FUA,TIME TO DEPLETE FUA,"
+                                "TOTAL POSSIBLE GB,PRICE / GB" + "\n"
+                            )
+                            max_gb_file.write(
+                                "ISP, PLAN,PRICE (INC. 8% GST),TOTAL POSSIBLE GB" + "\n"
+                            )
+                            max_value.write(
+                                "ISP, PLAN,PRICE (INC. 8% GST),TOTAL POSSIBLE GB,PRICE / GB" + "\n"
+                            )
 
-                    for row in datafilereader:
-                        isp, plan_name, price, speed, speed_after_fua, allowance = self.read_from_data(row)
+                            for row in datafilereader:
+                                isp, plan_name, price, speed, speed_after_fua, allowance = self.read_from_data(row)
 
-                        # yikes...
-                        (price, speed, speed_after_fua, allowance,
-                         kbps, kbps_after_fua, time_for_gig,
-                         time_for_gig_after_fua, time_to_deplete_fua, time_left_after_fua,
-                         possible_gb_after_fua, possible_gb_total,
-                         price_per_gig) = self.calculate_all(price, speed, speed_after_fua, allowance)
+                                # yikes...
+                                (price, speed, speed_after_fua, allowance,
+                                 kbps, kbps_after_fua, time_for_gig,
+                                 time_for_gig_after_fua, time_to_deplete_fua, time_left_after_fua,
+                                 possible_gb_after_fua, possible_gb_total,
+                                 price_per_gig) = self.calculate_all(price, speed, speed_after_fua, allowance)
 
-                        # result.csv
-                        result_file.write(
-                            f"{isp},{plan_name},{price},{speed},{speed_after_fua},"
-                            f"{allowance},{kbps},{kbps_after_fua},{time_for_gig},"
-                            f"{time_for_gig_after_fua},{time_to_deplete_fua},"
-                            f"{time_left_after_fua},{possible_gb_after_fua},"
-                            f"{possible_gb_total},{price_per_gig}" + "\n"
-                        )
+                                # result.csv
+                                result_file.write(
+                                    f"{isp},{plan_name},{price},{speed},{speed_after_fua},"
+                                    f"{allowance},{kbps},{kbps_after_fua},{time_for_gig},"
+                                    f"{time_for_gig_after_fua},{time_to_deplete_fua},"
+                                    f"{time_left_after_fua},{possible_gb_after_fua},"
+                                    f"{possible_gb_total},{price_per_gig}" + "\n"
+                                )
 
-                        # result_simple.csv
-                        result_simple_file.write(
-                            f"{isp},{plan_name},{price},{speed},{speed_after_fua},"
-                            f"{allowance},{time_for_gig},"
-                            f"{time_for_gig_after_fua},{time_to_deplete_fua},"
-                            f"{possible_gb_total},{price_per_gig}" + "\n"
-                        )
+                                # result_simple.csv
+                                result_simple_file.write(
+                                    f"{isp},{plan_name},{price},{speed},{speed_after_fua},"
+                                    f"{allowance},{time_for_gig},"
+                                    f"{time_for_gig_after_fua},{time_to_deplete_fua},"
+                                    f"{possible_gb_total},{price_per_gig}" + "\n"
+                                )
+
+                                # gb
+                                max_gb_file.write(
+                                    f"{isp},{plan_name},{price},"
+                                    f"{possible_gb_total}" + "\n"
+                                )
+
+                                # value
+                                max_value.write(
+                                    f"{isp},{plan_name},{price},"
+                                    f"{possible_gb_total},{price_per_gig}" + "\n"
+                                )
 
 
 if __name__ == "__main__":

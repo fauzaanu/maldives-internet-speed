@@ -6,7 +6,7 @@ ooredoo,Supernet 30M,700,30,5,210
 ooredoo,Supernet 40M,1049,40,5,400
 ooredoo,Supernet 1G,6999,1000,5,4500
 ooredoo,Supernet Unlimited 50M,1449,50,50,0
-ooredoo,Supernet Unlimited 100M,1449,100,100,0
+ooredoo,Supernet Unlimited 100M,2749,100,100,0
 ooredoo,AirFibre 5G 1499,1499,500,5,750
 ooredoo,AirFibre 5G 1999,1999,500,5,1024
 ooredoo,AirFibre 5G 2999,2999,500,5,1536
@@ -34,5 +34,6 @@ dhiraagu,FIBRE 15M STARTER,490,15,5,120
 dhiraagu,FIBRE 100M,1990,100,5,900
 dhiraagu,FIBRE 200M,2990,200,5,1500
 dhiraagu,FIBRE 1G,6990,1000,5,4500
-dhiraagu,50M UNLIMITED (DHIRAAGU),1490,50,50,0
-dhiraagu,100M UNLIMITED (DHIRAAGU),2800,100,100,0
+dhiraagu,FIBRE 50M UNLIMITED,1490,50,50,0
+dhiraagu,FIBRE 100M UNLIMITED,2800,100,100,0
+Starlink,Standard,1000,200,1,1000

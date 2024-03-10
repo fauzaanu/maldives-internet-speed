@@ -2,9 +2,18 @@
 
 Comparing all the internet speeds in maldives along with max possible GB, Rate of price per GB and so on
 
+[Max GB Comparison](https://github.com/fauzaanu/maldives-internet-speed/blob/main/max_gb.csv)
+
+[Max Value (Price / GB) Comparison](https://github.com/fauzaanu/maldives-internet-speed/blob/main/max_value.csv)
+
 [results](https://github.com/fauzaanu/maldives-internet-speed/blob/main/result.csv)
 
 [results simplified](https://github.com/fauzaanu/maldives-internet-speed/blob/main/result_simple.csv)
+
+## How to choose an internet package 101
+
+1. You download a lot of stuff constantly
+   Go for the highest GB possible plans, with the current ranking this place is
 
 ## Usage
 
