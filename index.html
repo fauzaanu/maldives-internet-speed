@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Maldives Internet Speeds</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- DataTables Tailwind CSS -->
+    <link rel="stylesheet" type="text/css" href="styles.css">
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+
+    <!-- DataTables JS -->
+    <script type="text/javascript" charset="utf8"
+            src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+
+    <!-- Papa Parse JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+</head>
+<body>
+<div id="table-container">
+
+</div>
+
+<script>
+    // Load CSV file from a link
+    Papa.parse("https://raw.githubusercontent.com/fauzaanu/maldives-internet-speed/main/result.csv", {
+        download: true,
+        header: true,
+        complete: function (results) {
+            // Convert CSV data to HTML table
+            $('#table-container').html('<table id="data-table"></table>');
+            $('#data-table').DataTable({
+                data: results.data,
+                 pageLength: 25,
+                columns: Object.keys(results.data[0]).map(function (key) {
+                    return {title: key, data: key};
+                })
+            });
+        }
+    });
+
+
+
+
+
+
+    // suppress all alert messages
+    window.alert = function () {
+    };
+
+
+</script>
+</body>
+</html>

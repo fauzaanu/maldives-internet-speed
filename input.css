@@ -1,0 +1,93 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Path: index.css */
+
+#table-container {
+    @apply flex mx-auto w-full max-w-7xl justify-center;
+}
+
+#data-table_wrapper {
+    @apply p-4;
+}
+
+table {
+    @apply w-full bg-white  my-10 shadow-lg;
+}
+
+thead {
+    @apply bg-black text-white rounded-t-xl text-xs font-bold;
+}
+
+#data-table_length {
+    @apply hidden flex items-center;
+}
+
+#data-table_length label {
+    @apply mr-2 text-gray-500;
+}
+
+#data-table_length select {
+    @apply p-2 border border-gray-300 rounded bg-gray-100 text-gray-700;
+}
+
+#data-table_filter {
+    @apply hidden flex items-center;
+}
+
+#data-table_filter label {
+    @apply mr-2 text-gray-500;
+}
+
+#data-table_filter input {
+    @apply p-2 border border-gray-300 rounded bg-gray-100 text-gray-700;
+}
+
+#data-table_info {
+    @apply hidden;
+}
+
+#data-table_paginate {
+    @apply flex justify-end items-center;
+}
+
+#data-table_paginate .paginate_button {
+    @apply px-3 py-1 border border-gray-300 rounded bg-gray-200 text-gray-700;
+}
+
+#data-table_paginate .paginate_button:hover {
+    @apply bg-gray-300;
+}
+
+#data-table_paginate .paginate_button.current {
+    @apply bg-blue-500 text-white;
+}
+
+#data-table_paginate .paginate_button.current:hover {
+    @apply bg-blue-700;
+}
+
+#data-table_paginate .paginate_button.disabled {
+    @apply cursor-not-allowed;
+}
+
+#data-table_paginate .paginate_button.disabled:hover {
+    @apply bg-gray-200;
+}
+
+#data-table_paginate .paginate_button.previous, #data-table_paginate .paginate_button.next {
+    @apply px-3 py-1 border border-gray-300 rounded bg-gray-200 text-gray-700;
+}
+
+#data-table_paginate .paginate_button.previous:hover, #data-table_paginate .paginate_button.next:hover {
+    @apply bg-gray-300;
+}
+
+#data-table_paginate .paginate_button.previous.disabled, #data-table_paginate .paginate_button.next.disabled {
+    @apply cursor-not-allowed;
+}
+
+#data-table_paginate .paginate_button.previous.disabled:hover, #data-table_paginate .paginate_button.next.disabled:hover {
+    @apply bg-gray-200;
+}
