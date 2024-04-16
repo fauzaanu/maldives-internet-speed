@@ -1,5 +1,7 @@
 # Internet Speeds in Maldives
 
+you can see a sortable table [from here](https://fauzaanu.github.io/maldives-internet-speed/)
+
 Comparing all the internet speeds in maldives along with max possible GB, Rate of price per GB and so on
 
 [Max GB Comparison](https://github.com/fauzaanu/maldives-internet-speed/blob/main/max_gb.csv)
